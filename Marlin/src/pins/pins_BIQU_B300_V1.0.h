@@ -22,11 +22,11 @@
  */
 
 /**
- * BIQU BQ111-A4
+ * BIQU B300 V1.0
  *
  * Applies to the following boards:
  *
- *  BOARD_BIQU_BQ111_A4 (Hotend, Fan, Bed)
+ *  BOARD_BIQU_B300_V1_0 ( Hotend0, Fan, Bed, SPI Driver)
  *
  */
 
@@ -79,6 +79,13 @@
 #define E0_ENABLE_PIN      P0_21
 #ifndef E0_CS_PIN
   #define E0_CS_PIN        P1_17   // ETH
+#endif
+
+#define E1_STEP_PIN        P3_25
+#define E1_DIR_PIN         P0_00
+#define E1_ENABLE_PIN      P0_10
+#ifndef E1_CS_PIN
+  #define E1_CS_PIN        P0_10   // ETH
 #endif
 
 
