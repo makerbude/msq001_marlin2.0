@@ -41,6 +41,13 @@
 #define Z_MAX_PIN          P1_24
 
 //
+// Z Probe (when not Z_MIN_PIN)
+//
+#ifndef Z_MIN_PROBE_PIN
+  #define Z_MIN_PROBE_PIN  P1_24
+#endif
+
+//
 // Steppers
 //
 #define X_STEP_PIN         P0_04   //
@@ -105,8 +112,7 @@
 #define HEATER_BED_PIN   P2_05
 
 
-#define SDSS              P1_23   // (53)
-
+#define SDSS              P0_06  
 
 
 
@@ -128,96 +134,75 @@
  * on the LCD display during accesses of the SD card. The menus/code has been arranged so
  * that the garbage/lines are erased immediately after the SD card accesses are completed.
  */
+/*
+|               _____                                             _____
+|           NC | · · | GND                                    5V | · · | GND
+|        RESET | · · | 1.31(SD_DETECT)             (LCD_D7) 1.23 | · · | 1.22 (LCD_D6)
+|   (MOSI)0.18 | · · | 3.25(BTN_EN2)               (LCD_D5) 1.21 | · · | 1.20 (LCD_D4)
+|  (SD_SS)0.16 | · · | 3.26(BTN_EN1)               (LCD_RS) 1.19 | · · | 1.18 (LCD_EN)
+|    (SCK)0.15 | · · | 0.17(MISO)                 (BTN_ENC) 0.28 | · · | 1.30 (BEEPER)
+|               ￣￣                                               ￣￣  
+|               EXP2                                              EXP1  
+*/
 
 #if ENABLED(ULTRA_LCD)
 
-  #if ENABLED(CR10_STOCKDISPLAY)
+  #define BEEPER_PIN         P1_30   // (37) not 5V tolerant
+  #define BTN_ENC            P2_11   // (35) J3-3 & AUX-4
+  #define LCD_PINS_RS        P0_16   // (16) J3-7 & AUX-4
 
-    // Re-Arm can support Creality stock display without SD card reader and single cable on EXP3.
-    // Re-Arm J3 pins 1 (p1.31) & 2 (P3.26) are not used. Stock cable will need to have one
-    // 10-pin IDC connector trimmed or replaced with a 12-pin IDC connector to fit J3.
-    // Requires REVERSE_ENCODER_DIRECTION in Configuration.h
+  #define BTN_EN1            P3_26   // (31) J3-2 & AUX-4
+  #define BTN_EN2            P3_25   // (33) J3-4 & AUX-4
+  #define SD_DETECT_PIN      P1_31   // (49) (NOT 5V tolerant)
+  
+  #define LCD_SDSS           P0_16   // (16) J3-7 & AUX-4
 
-    #define BEEPER_PIN          P2_11   // J3-3 & AUX-4
+  #define LCD_PINS_ENABLE    P1_18  
+  #define LCD_PINS_D4        P1_20  
 
-    #define BTN_EN1             P0_16   // J3-7 & AUX-4
-    #define BTN_EN2             P1_23   // J3-5 & AUX-4
-    #define BTN_ENC             P3_25   // J3-4 & AUX-4
+    #if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER) && DISABLED(DOGLCD)
+      #error "REPRAP_DISCOUNT_SMART_CONTROLLER is not supported by the BIGTREE SKR V1.1"
+    #endif  
+#endif // ULTRA_LCD
 
-    #define LCD_PINS_RS         P0_15   // J3-9 & AUX-4 (CS)
-    #define LCD_PINS_ENABLE     P0_18   // J3-10 & AUX-3 (SID, MOSI)
-    #define LCD_PINS_D4         P2_06   // J3-8 & AUX-3 (SCK, CLK)
 
-  #else
+//#define USB_SD_DISABLED
+#define USB_SD_ONBOARD        // Provide the onboard SD card to the host as a USB mass storage device
 
-    #define BEEPER_PIN          P1_30   // (37) not 5V tolerant
+#define LPC_SD_LCD          // Marlin uses the SD drive attached to the LCD
+//#define LPC_SD_ONBOARD        // Marlin uses the SD drive on the control board
 
-    #define BTN_EN1             P3_26   // (31) J3-2 & AUX-4
-    #define BTN_EN2             P3_25   // (33) J3-4 & AUX-4
-    #define BTN_ENC             P2_11   // (35) J3-3 & AUX-4
+#if ENABLED(LPC_SD_LCD)
 
-    #define SD_DETECT_PIN       P1_31   // (49) not 5V tolerant   J3-1 & AUX-3
-    #define KILL_PIN            P1_22   // (41) J5-4 & AUX-4
-    #define LCD_PINS_RS         P0_16   // (16) J3-7 & AUX-4
-    #define LCD_SDSS            P0_16   // (16) J3-7 & AUX-4
+  #define SCK_PIN          P0_15
+  #define MISO_PIN         P0_17
+  #define MOSI_PIN         P0_18
+  #define SS_PIN           P0_16   // Chip select for SD card used by Marlin
+  #define ONBOARD_SD_CS    P0_06   // Chip select for "System" SD card
 
-    #if ENABLED(NEWPANEL)
-      #if ENABLED(REPRAPWORLD_KEYPAD)
-        #define SHIFT_OUT         P0_18   // (51)  (MOSI) J3-10 & AUX-3
-        #define SHIFT_CLK         P0_15   // (52)  (SCK)  J3-9 & AUX-3
-        #define SHIFT_LD          P1_31   // (49)  not 5V tolerant   J3-1 & AUX-3
-      #endif
-    #else
-      //#define SHIFT_CLK           P3_26   // (31)  J3-2 & AUX-4
-      //#define SHIFT_LD            P3_25   // (33)  J3-4 & AUX-4
-      //#define SHIFT_OUT           P2_11   // (35)  J3-3 & AUX-4
-      //#define SHIFT_EN            P1_22   // (41)  J5-4 & AUX-4
-    #endif
+#elif ENABLED(LPC_SD_ONBOARD)
 
-    #if ENABLED(VIKI2) || ENABLED(miniVIKI)
-      // #define LCD_SCREEN_ROT_180
-
-      #define BTN_EN1             P3_26   // (31) J3-2 & AUX-4
-      #define BTN_EN2             P3_25   // (33) J3-4 & AUX-4
-      #define BTN_ENC             P2_11   // (35) J3-3 & AUX-4
-
-      #define SD_DETECT_PIN       P1_31   // (49) not 5V tolerant   J3-1 & AUX-3
-      #define KILL_PIN            P1_22   // (41) J5-4 & AUX-4
-
-      #define DOGLCD_CS           P0_16   // (16)
-      #define DOGLCD_A0           P2_06   // (59) J3-8 & AUX-2
-      #define DOGLCD_SCK          SCK_PIN
-      #define DOGLCD_MOSI         MOSI_PIN
-
-      #define STAT_LED_BLUE_PIN   P0_26   // (63)  may change if cable changes
-      #define STAT_LED_RED_PIN    P1_21   // ( 6)  may change if cable changes
-    #else
-      #define DOGLCD_CS           P0_26   // (63) J5-3 & AUX-2
-      #define DOGLCD_A0           P2_06   // (59) J3-8 & AUX-2
-      #define LCD_BACKLIGHT_PIN   P0_16   // (16) J3-7 & AUX-4 - only used on DOGLCD controllers
-      #define LCD_PINS_ENABLE     P0_18   // (51) (MOSI) J3-10 & AUX-3
-      #define LCD_PINS_D4         P0_15   // (52) (SCK)  J3-9 & AUX-3
-      #if ENABLED(ULTIPANEL)
-        #define LCD_PINS_D5       P1_17   // (71) ENET_MDIO
-        #define LCD_PINS_D6       P1_14   // (73) ENET_RX_ER
-        #define LCD_PINS_D7       P1_10   // (75) ENET_RXD1
-      #endif
-    #endif
-
-    //#define MISO_PIN            P0_17   // (50)  system defined J3-10 & AUX-3
-    //#define MOSI_PIN            P0_18   // (51)  system defined J3-10 & AUX-3
-    //#define SCK_PIN             P0_15   // (52)  system defined J3-9 & AUX-3
-    //#define SS_PIN              P1_23   // (53)  system defined J3-5 & AUX-3 - sometimes called SDSS
-
-    #if ENABLED(MINIPANEL)
-      // GLCD features
-      //#define LCD_CONTRAST   190
-      // Uncomment screen orientation
-      //#define LCD_SCREEN_ROT_90
-      //#define LCD_SCREEN_ROT_180
-      //#define LCD_SCREEN_ROT_270
-    #endif
-
+  #if ENABLED(USB_SD_ONBOARD)
+    // When sharing the SD card with a PC we want the menu options to
+    // mount/unmount the card and refresh it. So we disable card detect.
+    #define SHARED_SD_CARD
+    #undef SD_DETECT_PIN               // redefine detect pin onboard tf card
+    #define SD_DETECT_PIN      P0_27   // (57) open-drain
   #endif
 
-#endif // ULTRA_LCD
+  #define SCK_PIN          P0_07
+  #define MISO_PIN         P0_08
+  #define MOSI_PIN         P0_09
+  #define SS_PIN           P0_16   // Chip select for SD card used by Marlin
+  #define ONBOARD_SD_CS    P0_06   // Chip select for "System" SD card
+
+#endif
+
+
+ /**
+  * Special pins
+  *   P1_30  (37) (NOT 5V tolerant)
+  *   P1_31  (49) (NOT 5V tolerant)
+  *   P0_27  (57) (Open collector)
+  *   P0_28  (58) (Open collector)
+  */
