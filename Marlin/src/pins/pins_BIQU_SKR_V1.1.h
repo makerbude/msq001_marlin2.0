@@ -21,13 +21,12 @@
  *
  */
 
-
 #ifndef TARGET_LPC1768
   #error "Oops!  Make sure you have the LPC1768 environment selected in your IDE."
 #endif
 
 #ifndef BOARD_NAME
-  #define BOARD_NAME "BIQU SKR V1.1"
+  #define BOARD_NAME "BIGTREE SKR V1.1"
 #endif
 
 //
@@ -50,23 +49,23 @@
 //
 // Steppers
 //
-#define X_STEP_PIN         P0_04   //
-#define X_DIR_PIN          P0_05   //
-#define X_ENABLE_PIN       P4_28   //
+#define X_STEP_PIN         P0_04
+#define X_DIR_PIN          P0_05
+#define X_ENABLE_PIN       P4_28
 #ifndef X_CS_PIN
   #define X_CS_PIN         P4_28    // ETH
 #endif
 
-#define Y_STEP_PIN         P2_01   //
-#define Y_DIR_PIN          P2_02   //
-#define Y_ENABLE_PIN       P2_00   //
+#define Y_STEP_PIN         P2_01
+#define Y_DIR_PIN          P2_02
+#define Y_ENABLE_PIN       P2_00
 #ifndef Y_CS_PIN
   #define Y_CS_PIN         P2_00   // ETH
 #endif
 
-#define Z_STEP_PIN         P0_20   //
-#define Z_DIR_PIN          P0_21   //
-#define Z_ENABLE_PIN       P0_19   //
+#define Z_STEP_PIN         P0_20
+#define Z_DIR_PIN          P0_21
+#define Z_ENABLE_PIN       P0_19
 #ifndef Z_CS_PIN
   #define Z_CS_PIN         P0_19   // ETH
 #endif
@@ -85,7 +84,6 @@
   #define E1_CS_PIN        P0_10   // ETH
 #endif
 
-
 //
 // Software SPI pins for TMC2130 stepper drivers
 //
@@ -95,7 +93,6 @@
   #define TMC_SW_SCK       P0_15   // ETH
 #endif
 
-
 //
 // Temperature Sensors
 //  3.3V max when defined as an analog input
@@ -104,23 +101,22 @@
 #define TEMP_0_PIN         1   // A1 (T1) - (68) - TEMP_0_PIN
 #define TEMP_1_PIN         2   // A2 (T2) - (69) - TEMP_1_PIN
 
+//
+// Heaters / Fans
+//
+#define HEATER_0_PIN       P2_07
+#if HOTENDS == 1
+  #define FAN1_PIN         P2_04
+#else
+  #define HEATER_1_PIN     P2_04
+#endif
+#define FAN_PIN            P2_03
+#define HEATER_BED_PIN     P2_05
 
-
-#define HEATER_0_PIN     P2_07
-#define HEATER_1_PIN     P2_04
-#define FAN_PIN          P2_03
-#define HEATER_BED_PIN   P2_05
-
-
-#define SDSS              P0_06  
-
-
-
-/**
- * LCD / Controller
- *
- * All controllers can use J3 and J5 on the Re-ARM board.  Custom cabling will be required.
- */
+//
+// Misc. Functions
+//
+#define SDSS               P0_06  
 
 /**
  * Smart LCD adapter
@@ -137,39 +133,37 @@
 /*
 |               _____                                             _____
 |           NC | · · | GND                                    5V | · · | GND
-|        RESET | · · | 1.31(SD_DETECT)             (LCD_D7) 1.23 | · · | 1.22 (LCD_D6)
-|   (MOSI)0.18 | · · | 3.25(BTN_EN2)               (LCD_D5) 1.21 | · · | 1.20 (LCD_D4)
-|  (SD_SS)0.16 | · · | 3.26(BTN_EN1)               (LCD_RS) 1.19 | · · | 1.18 (LCD_EN)
-|    (SCK)0.15 | · · | 0.17(MISO)                 (BTN_ENC) 0.28 | · · | 1.30 (BEEPER)
+|        RESET | · · | 1.31(SD_DETECT)                        NC | · · | NC
+|   (MOSI)0.18 | · · | 3.25(BTN_EN2)                          NC | · · | 0.15 (LCD_D4)
+|  (SD_SS)1.23 | · · | 3.26(BTN_EN1)               (LCD_RS) 0.16 | · · | 0.18 (LCD_EN)
+|    (SCK)0.15 | · · | 0.17(MISO)                 (BTN_ENC) 2.11 | · · | 1.30 (BEEPER)
 |               ￣￣                                               ￣￣  
 |               EXP2                                              EXP1  
 */
-
 #if ENABLED(ULTRA_LCD)
 
-  #define BEEPER_PIN         P1_30   // (37) not 5V tolerant
-  #define BTN_ENC            P2_11   // (35) J3-3 & AUX-4
-  #define LCD_PINS_RS        P0_16   // (16) J3-7 & AUX-4
+  #define BEEPER_PIN       P1_30   // (37) not 5V tolerant
+  #define BTN_ENC          P2_11   // (35) J3-3 & AUX-4
+  #define LCD_PINS_RS      P0_16   // (16) J3-7 & AUX-4
 
-  #define BTN_EN1            P3_26   // (31) J3-2 & AUX-4
-  #define BTN_EN2            P3_25   // (33) J3-4 & AUX-4
-  #define SD_DETECT_PIN      P1_31   // (49) (NOT 5V tolerant)
+  #define BTN_EN1          P3_26   // (31) J3-2 & AUX-4
+  #define BTN_EN2          P3_25   // (33) J3-4 & AUX-4
+  #define SD_DETECT_PIN    P1_31   // (49) (NOT 5V tolerant)
   
-  #define LCD_SDSS           P0_16   // (16) J3-7 & AUX-4
+  #define LCD_SDSS         P1_23
 
-  #define LCD_PINS_ENABLE    P1_18  
-  #define LCD_PINS_D4        P1_20  
+  #define LCD_PINS_ENABLE  P0_18  
+  #define LCD_PINS_D4      P0_15  
 
     #if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER) && DISABLED(DOGLCD)
       #error "REPRAP_DISCOUNT_SMART_CONTROLLER is not supported by the BIGTREE SKR V1.1"
     #endif  
 #endif // ULTRA_LCD
 
-
 //#define USB_SD_DISABLED
 #define USB_SD_ONBOARD        // Provide the onboard SD card to the host as a USB mass storage device
 
-#define LPC_SD_LCD          // Marlin uses the SD drive attached to the LCD
+#define LPC_SD_LCD            // Marlin uses the SD drive attached to the LCD
 //#define LPC_SD_ONBOARD        // Marlin uses the SD drive on the control board
 
 #if ENABLED(LPC_SD_LCD)
@@ -177,7 +171,7 @@
   #define SCK_PIN          P0_15
   #define MISO_PIN         P0_17
   #define MOSI_PIN         P0_18
-  #define SS_PIN           P0_16   // Chip select for SD card used by Marlin
+  #define SS_PIN           P1_23   // Chip select for SD card used by Marlin
   #define ONBOARD_SD_CS    P0_06   // Chip select for "System" SD card
 
 #elif ENABLED(LPC_SD_ONBOARD)
@@ -186,18 +180,17 @@
     // When sharing the SD card with a PC we want the menu options to
     // mount/unmount the card and refresh it. So we disable card detect.
     #define SHARED_SD_CARD
-    #undef SD_DETECT_PIN               // redefine detect pin onboard tf card
-    #define SD_DETECT_PIN      P0_27   // (57) open-drain
+    #undef SD_DETECT_PIN           // redefine detect pin onboard tf card
+    #define SD_DETECT_PIN  P0_27   // (57) open-drain
   #endif
 
   #define SCK_PIN          P0_07
   #define MISO_PIN         P0_08
   #define MOSI_PIN         P0_09
-  #define SS_PIN           P0_16   // Chip select for SD card used by Marlin
+  #define SS_PIN           P1_23   // Chip select for SD card used by Marlin
   #define ONBOARD_SD_CS    P0_06   // Chip select for "System" SD card
 
 #endif
-
 
  /**
   * Special pins
